@@ -74,7 +74,7 @@ export default function LandingPage() {
                   transition={{ duration: 0.8 }}
                   className="text-5xl md:text-6xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-20% bg-clip-text text-transparent from-purple-500 to-purple-200"
                 >
-                  AI-Powepurple Address Verification
+                  AI-Powered Address Verification
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: -20 }}
@@ -214,9 +214,9 @@ export default function LandingPage() {
                       icon: CheckCircle,
                     },
                     {
-                      title: "Pincode Ppurpleiction",
+                      title: "Pincode Prediction",
                       description:
-                        "Ppurpleict and validate pincodes based on address components.",
+                        "Predict and validate pincodes based on address components.",
                       icon: MapPin,
                     },
                     {

@@ -37,7 +37,7 @@ const Header = () => {
           variant="outline"
           className="bg-gradient-to-br mt-8 w-full from-purple-500 to-purple-700 text-gray-200 hover:opacity-80 hover:text-gray-200 transition-colors duration-300 border-none rounded-xl py-5"
         >
-          Login
+          <Link href="/sign-in">Login</Link>
         </Button>
       </SheetContent>
     </Sheet>
@@ -102,7 +102,7 @@ const Header = () => {
             variant="outline"
             className="bg-gradient-to-br from-purple-500 to-purple-700 text-gray-200 hover:opacity-80 hover:text-gray-200 transition-colors duration-300 border-none"
           >
-            Login
+            <Link href="/sign-in">Login</Link>
           </Button>
         )}
       </div>
