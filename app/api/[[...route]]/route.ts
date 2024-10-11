@@ -1,14 +1,13 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import { HTTPException } from "hono/http-exception";
+import AddressRouter from "./address";
 
 export const runtime = "edge";
 
 const app = new Hono().basePath("/api");
 
-const routes = app.get("/:email/login", (c) => {
-  return c.json({ message: "login route" });
-});
+const routes = app.route("/:email/address", AddressRouter);
 
 app.onError((err, ctx) => {
   if (err instanceof HTTPException) {

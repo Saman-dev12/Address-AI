@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import NextAuthProvider from "./provider";
 import { Toaster } from "react-hot-toast";
+import { QueryProvider } from "./query-client";
+import { Toaster as SonnerToaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,8 +33,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextAuthProvider>
-          {children}
-          <Toaster />
+          <QueryProvider>
+            {children}
+            <Toaster />
+            <SonnerToaster />
+          </QueryProvider>
         </NextAuthProvider>
       </body>
     </html>
