@@ -3,9 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
+// import { useDropzone } from "react-dropzone";
+import { useCSVReader } from "react-papaparse";
 
-const CSVDropper = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const INITIAL_IMPORT_RESULTS = {
+  data: [],
+  errors: [],
+  meta: {},
+};
+
+interface CSVDropperProps {
+  onUpload: (results: typeof INITIAL_IMPORT_RESULTS) => void;
+}
+
+const CSVDropper: React.FC<CSVDropperProps> = ({ onUpload }) => {
+  const { CSVReader } = useCSVReader();
+  const inputRef = useRef<HTMLButtonElement>(null);
   return (
     <div className="border-purple-500 border rounded-2xl h-96 mt-12 shadow-lg flex flex-col items-center justify-center">
       <Image
@@ -17,12 +30,15 @@ const CSVDropper = () => {
         onClick={(e) => inputRef.current?.click()}
       />
       <h3 className="text-xl">Drag and drop CSV file here</h3>
-      <input type="file" accept=".csv" hidden ref={inputRef} />
       <p className="my-3 text-slate-400 text-lg">Or</p>
-      <Button onClick={(e) => inputRef.current?.click()}>
-        <Plus className="size-4 mr-2" />
-        Browse here
-      </Button>
+      <CSVReader onUploadAccepted={(results: any) => onUpload(results)}>
+        {({ getRootProps }: any) => (
+          <Button ref={inputRef} {...getRootProps()}>
+            <Plus className="size-4 mr-2" />
+            Browse here
+          </Button>
+        )}
+      </CSVReader>
     </div>
   );
 };
