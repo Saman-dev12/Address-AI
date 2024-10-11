@@ -2,6 +2,8 @@
 import { useState } from "react";
 import CSVDropper from "./components/csv-dropper";
 import ImportCard from "./components/import-card";
+import { useBulkAddress } from "./components/apis/use-bulk-addresses";
+import { useSession } from "next-auth/react";
 
 type VARIANT = "UPLOAD" | "IMPORT";
 
@@ -11,6 +13,10 @@ const AddressVerifierPage = () => {
     errors: [],
     meta: {},
   };
+
+  const { data } = useSession();
+
+  const bulkAddressQuery = useBulkAddress(data?.user?.email!);
 
   const [variant, setVariant] = useState<VARIANT>("UPLOAD");
   const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
@@ -26,7 +32,20 @@ const AddressVerifierPage = () => {
   };
 
   const handleSubmitImport = async (values: string[]) => {
-    console.log(values);
+    // console.log(values);
+    bulkAddressQuery.mutate(
+      {
+        addresses: values,
+      },
+      {
+        onSuccess(data, variables, context) {
+          console.log("Data: ", data);
+        },
+        onError(error, variables, context) {
+          console.log("ERROR:", error);
+        },
+      }
+    );
   };
 
   return (

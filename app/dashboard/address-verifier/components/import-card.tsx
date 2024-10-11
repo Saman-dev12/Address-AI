@@ -72,12 +72,12 @@ const ImportCard: React.FC<ImportCardProps> = ({
         .join(",")
         .trim();
     });
-    console.log(columnData);
+    onSubmit(columnData);
   };
 
   return (
     <div>
-      <Card className="border-none drop-shadow-sm">
+      <Card className="border-none drop-shadow-sm mb-40">
         <CardHeader className="lg:flex-row lg:items-center gap-y-2 lg:justify-between">
           <CardTitle className="text-xl line-clamp-1">
             Import Addresses
