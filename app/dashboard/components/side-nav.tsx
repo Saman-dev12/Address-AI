@@ -1,8 +1,6 @@
-// "use client";
 import Link from "next/link";
 import { Home, CheckCircle, Eye, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
 import getCurrentUser from "@/actions/getCurrentUser";
 
 const SideNav = async () => {
