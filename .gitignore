@@ -6,6 +6,8 @@
 .pnp.js
 .yarn/install-state.gz
 
+/app/api/address_model/.env
+
 # testing
 /coverage
 

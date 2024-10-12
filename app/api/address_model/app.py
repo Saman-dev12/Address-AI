@@ -18,7 +18,7 @@ def process_address():
     data = request.get_json()
     address = data.get("address", "")
     result = system.process_address(address)
-    return jsonify(result)
+    return jsonify({"data": result})
 
 
 @app.route("/bulk_process_addresses", methods=["POST"])
