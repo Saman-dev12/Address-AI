@@ -4,6 +4,12 @@ import CSVDropper from "./components/csv-dropper";
 import ImportCard from "./components/import-card";
 import { useBulkAddress } from "./components/apis/use-bulk-addresses";
 import { useSession } from "next-auth/react";
+import {
+  useBulkInputAddressesStore,
+  useBulkOutputAddressesStore,
+} from "@/zustand/address";
+import { useRouter } from "next/navigation";
+import ResponsiveContainer from "@/app/responsive-container";
 
 type VARIANT = "UPLOAD" | "IMPORT";
 
@@ -15,6 +21,11 @@ const AddressVerifierPage = () => {
   };
 
   const { data } = useSession();
+
+  const router = useRouter();
+
+  const { setOutputAddresses } = useBulkOutputAddressesStore();
+  const { setInputAddresses } = useBulkInputAddressesStore();
 
   const bulkAddressQuery = useBulkAddress(data?.user?.email!);
 
@@ -32,16 +43,21 @@ const AddressVerifierPage = () => {
   };
 
   const handleSubmitImport = async (values: string[]) => {
+    setInputAddresses(values);
     // console.log(values);
     bulkAddressQuery.mutate(
       {
         addresses: values,
       },
       {
-        onSuccess(data, variables, context) {
+        onSuccess(data) {
           console.log("Data: ", data);
+          if ("corrected_addresses" in data) {
+            setOutputAddresses(data.corrected_addresses);
+            router.push("/dashboard/address-verifier/results");
+          }
         },
-        onError(error, variables, context) {
+        onError(error) {
           console.log("ERROR:", error);
         },
       }
@@ -49,12 +65,10 @@ const AddressVerifierPage = () => {
   };
 
   return (
-    <div className="ml-80 pt-16 pr-8">
-      <h1 className="text-3xl leading-none">Address Verification</h1>
-      <h2 className="text-sm text-gray-500 my-1">
-        Verify and correct postal addresses with our Address-Verifier tool
-      </h2>
-      <hr className="mb-6" />
+    <ResponsiveContainer
+      heading="Addresss Verification"
+      description="Verify and correct addresses in bulk"
+    >
       {variant === "UPLOAD" ? (
         <CSVDropper onUpload={onUpload} />
       ) : (
@@ -64,7 +78,7 @@ const AddressVerifierPage = () => {
           data={importResults.data}
         />
       )}
-    </div>
+    </ResponsiveContainer>
   );
 };
 

@@ -20,7 +20,7 @@ const CSVDropper: React.FC<CSVDropperProps> = ({ onUpload }) => {
   const { CSVReader } = useCSVReader();
   const inputRef = useRef<HTMLButtonElement>(null);
   return (
-    <div className="border-purple-500 border rounded-2xl h-96 mt-12 shadow-lg flex flex-col items-center justify-center">
+    <div className="border-purple-500 border rounded-2xl h-96 mt-12 shadow-lg flex flex-col items-center justify-center bg-white">
       <Image
         src="/tool-upload.jpg"
         alt="CSV File"

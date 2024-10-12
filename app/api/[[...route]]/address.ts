@@ -5,16 +5,9 @@ import axios from "axios";
 import { db } from "@/db/drizzle";
 import { companyTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { OutputAddress } from "@/zustand/address";
 
 const address_model_url = process.env.PYTHON_SERVER_URL;
-
-export type OutputAddress = {
-  corrected_address: string;
-  original_address: string;
-  predicted_pincode: number | null;
-  spelling_corrections: Record<string, string>;
-  status: string;
-};
 
 const app = new Hono().post(
   "/bulk-address",
@@ -57,6 +50,8 @@ const app = new Hono().post(
       return c.json({ error: "Internal Server Error" }, 500);
     }
 
+    console.log(corrected_addresses);
+
     if (corrected_addresses.length <= 0) {
       console.log(corrected_addresses.length);
       return c.json({ error: "Internal Server Error" }, 500);
@@ -64,7 +59,7 @@ const app = new Hono().post(
 
     return c.json(
       {
-        data: corrected_addresses,
+        corrected_addresses,
       },
       200
     );
