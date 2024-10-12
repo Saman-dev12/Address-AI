@@ -28,9 +28,11 @@ export const useBulkAddress = (email: string) => {
         throw new Error(errorData.error || "Failed to verify addresses");
       }
 
-      return response.json();
+      const responseData = await response.json();
+
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (_data) => {
       toast.success("Addresses verified successfully");
       // queryClient.invalidateQueries({queryKey:["get-addresses",email]})
     },
