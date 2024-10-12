@@ -2,7 +2,7 @@
 import { useState } from "react";
 import CSVDropper from "./components/csv-dropper";
 import ImportCard from "./components/import-card";
-import { useBulkAddress } from "./components/apis/use-bulk-addresses";
+import { useBulkAddress } from "@/features/apis/use-bulk-addresses";
 import { useSession } from "next-auth/react";
 import {
   useBulkInputAddressesStore,
