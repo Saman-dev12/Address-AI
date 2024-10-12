@@ -14,14 +14,16 @@ import { cn } from "@/lib/utils";
 import {
   useBulkInputAddressesStore,
   useBulkOutputAddressesStore,
+  useInputAddressStore,
 } from "@/zustand/address";
-import { Download } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const OutputAddressesClient = () => {
   const router = useRouter();
   const { inputAddresses } = useBulkInputAddressesStore();
   const { outputAddresses } = useBulkOutputAddressesStore();
+  const { setInputAddress } = useInputAddressStore();
   return (
     <Card className="bg-white border-purple-500">
       <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
@@ -97,6 +99,18 @@ const OutputAddressesClient = () => {
                           (Invalid or Incomplete Address)
                         </span>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="link"
+                        onClick={() => {
+                          setInputAddress(address);
+                          router.push("/dashboard/address-verifier/map");
+                          router.refresh();
+                        }}
+                      >
+                        See on Map <ArrowRight className="size-4 ml-2" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );
