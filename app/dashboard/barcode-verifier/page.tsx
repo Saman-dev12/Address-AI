@@ -1,6 +1,6 @@
 import React from "react";
 import Barcode from "./components/barcode";
-import ResponsiveContainer from "@/app/responsive-container";
+import ResponsiveContainer from "@/components/responsive-container";
 
 function OCRVerifier() {
   return (

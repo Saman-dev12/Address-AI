@@ -1,7 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Home, CheckCircle, Eye, Settings, User, Menu } from "lucide-react";
+import {
+  Home,
+  CheckCircle,
+  Eye,
+  Settings,
+  User,
+  Menu,
+  Barcode,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -29,9 +37,14 @@ const SideNav = () => {
       icon: <CheckCircle className={iconClassName} />,
     },
     {
-      label: "OCR Verification Page",
+      label: "OCR Verification",
       href: `/dashboard/ocr-verifier`,
       icon: <Eye className={iconClassName} />,
+    },
+    {
+      label: "Barcode Verifier",
+      href: `/dashboard/barcode-verifier`,
+      icon: <Barcode className={iconClassName} />,
     },
     {
       label: "Settings",
@@ -116,13 +129,16 @@ const SideNav = () => {
               <Menu className="h-4 w-4" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 bg-black p-6">
+          <SheetContent
+            side="left"
+            className="w-72 bg-black p-6 overflow-y-auto"
+          >
             <NavContent />
           </SheetContent>
         </Sheet>
       </div>
       <div className="md:hidden h-16"></div>
-      <div className="hidden md:flex h-screen fixed inset-y-0 left-0 bg-black w-72 flex-col items-start text-white rounded-e-lg px-5 py-6 justify-between">
+      <div className="hidden md:flex h-screen fixed inset-y-0 left-0 bg-black w-72 flex-col items-start text-white rounded-e-lg px-5 py-6 justify-between overflow-auto">
         <NavContent />
       </div>
     </>

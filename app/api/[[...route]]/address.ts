@@ -27,7 +27,7 @@ const app = new Hono()
     async (c) => {
       const addresses = c.req.valid("json").addresses;
       const email = c.req.valid("param").email;
-      // console.log(addresses);
+      console.log(addresses);
 
       let corrected_addresses: OutputAddress[] = [];
 
@@ -40,18 +40,26 @@ const app = new Hono()
         return c.json({ error: "Unauthorized User" }, 404);
       }
 
+      console.log(user);
+
       try {
         const res = await axios.post(
           `${address_model_url}/bulk_process_addresses`,
           { addresses }
         );
         corrected_addresses = res.data.data;
+
+        corrected_addresses.map(
+          (item) =>
+            (item.corrected_address =
+              item.corrected_address + " " + item.predicted_pincode)
+        );
       } catch (err) {
         console.log("BULK_ADDRESS[POST]:", err);
         return c.json({ error: "Internal Server Error" }, 500);
       }
 
-      console.log(corrected_addresses);
+      // console.log(corrected_addresses);
 
       if (corrected_addresses.length <= 0) {
         console.log(corrected_addresses.length);

@@ -4,17 +4,17 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<
-  (typeof client.api)[":email"]["address"]["bulk-address"]["$post"]
+  (typeof client.api)[":email"]["address"]["single-address"]["$post"]
 >;
 type RequestType = InferRequestType<
-  (typeof client.api)[":email"]["address"]["bulk-address"]["$post"]
+  (typeof client.api)[":email"]["address"]["single-address"]["$post"]
 >["json"];
 
 export const useSingleAddress = (email: string) => {
   return useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
       const response = await client.api[":email"]["address"][
-        "bulk-address"
+        "single-address"
       ].$post({
         json: json,
         param: {

@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Loader2, Upload } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight, FileText, Loader2, Plus } from "lucide-react";
 import axios from "axios";
+import Image from "next/image";
+import EditableText from "@/components/editable-text";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useInputAddressStore, useOutputAddressStore } from "@/zustand/address";
+import { useSingleAddress } from "@/features/apis/use-single-address";
 
 export default function OCRV() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,11 +19,23 @@ export default function OCRV() {
   const [error, setError] = useState<string | null>(null);
   const [imageData, setImageData] = useState<string | null>(null);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
+
+  const { data } = useSession();
+
+  const { setInputAddress } = useInputAddressStore();
+  const { setOutputAddress } = useOutputAddressStore();
+
+  const singleAddressQuery = useSingleAddress(data?.user?.email!);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
       setExtractedText(null);
       setError(null);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageDataUri = reader.result;
@@ -48,12 +65,11 @@ export default function OCRV() {
         },
       });
 
-      if (!response.data) {
+      const data = response.data;
+      if (!data) {
         throw new Error("OCR processing failed");
       }
 
-      const data = await response.data;
-      console.log(data.output);
       setExtractedText(data.output);
     } catch (err) {
       setError("Failed to process the image. Please try again.");
@@ -62,58 +78,116 @@ export default function OCRV() {
     }
   };
 
+  const handleTextSave = (newText: string) => {
+    setExtractedText(newText);
+  };
+
+  const handleContinue = () => {
+    singleAddressQuery.mutate(
+      {
+        address: extractedText!,
+      },
+      {
+        onSuccess: (data) => {
+          if ("corrected_address" in data) {
+            setOutputAddress(data.corrected_address);
+            setInputAddress(extractedText!);
+            router.push("/dashboard/address-verifier/map");
+          }
+        },
+      }
+    );
+  };
+
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          OCR Image Extractor
-        </CardTitle>
-      </CardHeader>
+    <Card className="w-full mx-auto border border-purple-500 shadow-lg">
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full">
+          {imageData && (
+            <div className="flex flex-col lg:flex-row items-center gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                onClick={() => {
+                  setFile(null);
+                  setExtractedText(null);
+                  setError(null);
+                  setImageData(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Extract Text
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+
           <div className="space-y-2">
-            <label
-              htmlFor="file-upload"
-              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  PNG, JPG or PDF (MAX. 10MB)
-                </p>
-              </div>
-              <Input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-                accept="image/*,.pdf"
+            {imageData ? (
+              <Image
+                src={imageData}
+                alt="Uploaded"
+                className="w-full h-64 object-contain border rounded-lg overflow-hidden cursor-pointer"
+                width={400}
+                height={200}
+                onClick={() => inputRef.current?.click()}
               />
-            </label>
+            ) : (
+              <>
+                <div className="w-full h-80 flex flex-col items-center justify-center rounded-lg">
+                  <Image
+                    src="/tool-box-image.svg"
+                    alt="Upload Image"
+                    width={100}
+                    height={100}
+                    className="h-32 w-32 hover:cursor-pointer"
+                    onClick={() => inputRef.current?.click()}
+                  />
+                  <p className="mb-2 text-xl text-gray-950 dark:text-gray-400">
+                    Drop, Upload or Paste Image
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Supported formats: JPG, PNG, GIF, JFIF (JPEG), HEIC, PDF
+                  </p>
+                  <p className="my-3 text-slate-400 text-lg">Or</p>
+                  <Button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                  >
+                    <Plus className="size-4 mr-2" />
+                    Browse here
+                  </Button>
+                </div>
+              </>
+            )}
+            <input
+              ref={inputRef}
+              hidden
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*,.pdf"
+              multiple={false}
+              aria-label="Upload File"
+            />
+
             {file && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                 File selected: {file.name}
               </p>
             )}
           </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <FileText className="mr-2 h-4 w-4" />
-                Extract Text
-              </>
-            )}
-          </Button>
         </form>
 
         {error && (
@@ -125,8 +199,12 @@ export default function OCRV() {
         {extractedText && (
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2">Extracted Text:</h3>
-            <div className="p-4 bg-gray-100 rounded-lg whitespace-pre-wrap dark:bg-gray-800 dark:text-gray-200">
-              {extractedText}
+            <EditableText text={extractedText} onSave={handleTextSave} />
+            <div className="flex items-center justify-end mt-4">
+              <Button onClick={handleContinue}>
+                Continue
+                <ArrowRight className="size-4 ml-2" />
+              </Button>
             </div>
           </div>
         )}

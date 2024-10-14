@@ -15,6 +15,7 @@ import {
   useBulkInputAddressesStore,
   useBulkOutputAddressesStore,
   useInputAddressStore,
+  useOutputAddressStore,
 } from "@/zustand/address";
 import { ArrowRight, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,7 @@ const OutputAddressesClient = () => {
   const { inputAddresses } = useBulkInputAddressesStore();
   const { outputAddresses } = useBulkOutputAddressesStore();
   const { setInputAddress } = useInputAddressStore();
+  const { setOutputAddress } = useOutputAddressStore();
   return (
     <Card className="bg-white border-purple-500">
       <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
@@ -105,6 +107,7 @@ const OutputAddressesClient = () => {
                         variant="link"
                         onClick={() => {
                           setInputAddress(address);
+                          setOutputAddress(outputAddresses[index]);
                           router.push("/dashboard/address-verifier/map");
                           router.refresh();
                         }}

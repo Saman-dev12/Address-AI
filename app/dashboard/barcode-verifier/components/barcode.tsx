@@ -4,22 +4,48 @@ import React, { useState, useRef, useEffect } from "react";
 import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Loader2, Upload, Camera } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  FileText,
+  Loader2,
+  Upload,
+  Camera,
+  Plus,
+  ArrowRight,
+} from "lucide-react";
 import {
   BrowserMultiFormatReader as BrowserMultiFormatReader2,
   NotFoundException,
 } from "@zxing/library";
+import Image from "next/image";
+import EditableText from "../../../../components/editable-text";
+import { useInputAddressStore, useOutputAddressStore } from "@/zustand/address";
+import { useSingleAddress } from "@/features/apis/use-single-address";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function BarcodeScanner() {
   const [file, setFile] = useState<File | null>(null);
-  const [extractedText, setExtractedText] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [extractedText, setExtractedText] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReader = useRef(new BrowserMultiFormatReader());
   const stopDecoding = useRef<(() => void) | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [scannerControls, setScannerControls] =
+    useState<IScannerControls | null>(null);
+
+  const router = useRouter();
+
+  const { data } = useSession();
+
+  const { setInputAddress } = useInputAddressStore();
+  const { setOutputAddress } = useOutputAddressStore();
+
+  const singleAddressQuery = useSingleAddress(data?.user?.email!);
 
   useEffect(() => {
     return () => {
@@ -31,9 +57,12 @@ export default function BarcodeScanner() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setImageUrl(URL.createObjectURL(selectedFile));
       setExtractedText(null);
       setError(null);
+      setIsScanning(false);
     }
   };
 
@@ -44,6 +73,8 @@ export default function BarcodeScanner() {
       setError("Please upload an image file first.");
       return;
     }
+
+    setIsLoading(true);
 
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -60,15 +91,13 @@ export default function BarcodeScanner() {
           } else {
             setError("Error decoding barcode.");
           }
-          setExtractedText(null);
+          setExtractedText("");
         }
       }
+      setIsLoading(false);
     };
     reader.readAsDataURL(file);
   };
-
-  const [scannerControls, setScannerControls] =
-    useState<IScannerControls | null>(null);
 
   const startBarcodeScanning = async () => {
     setIsScanning(true);
@@ -138,89 +167,165 @@ export default function BarcodeScanner() {
     setIsScanning(false);
   };
 
+  const handleCancel = () => {
+    setFile(null);
+    setImageUrl(null);
+    setExtractedText(null);
+    setError(null);
+    stopBarcodeScanning();
+  };
+
+  const [initialExtractedText, setInitialExtractedText] = useState<
+    string | null
+  >(null);
+
+  const handleContinue = () => {
+    singleAddressQuery.mutate(
+      {
+        address: extractedText! || initialExtractedText!,
+      },
+      {
+        onSuccess: (data) => {
+          if ("corrected_address" in data) {
+            setOutputAddress(data.corrected_address);
+            setInputAddress(extractedText! || initialExtractedText!);
+            router.push("/dashboard/address-verifier/map");
+          }
+        },
+      }
+    );
+  };
+
   return (
-    <Card className="w-full mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Barcode Information Extractor
-        </CardTitle>
-      </CardHeader>
+    <Card className="w-full mx-auto border border-purple-500 shadow-lg p-4">
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label
-              htmlFor="file-upload"
-              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  PNG, JPG or PDF (MAX. 10MB)
-                </p>
-              </div>
-              <Input
-                id="file-upload"
-                type="file"
-                className="hidden"
-                onChange={handleFileChange}
-                accept="image/*,.pdf"
-              />
-            </label>
-            {file && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                File selected: {file.name}
-              </p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading || isScanning}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <FileText className="mr-2 h-4 w-4" />
-                Extract Information
-              </>
-            )}
-          </Button>
-        </form>
-
-        <div className="mt-4">
-          <Button
-            onClick={isScanning ? stopBarcodeScanning : startBarcodeScanning}
-            className="w-full"
-            disabled={!codeReader.current}
-          >
-            {isScanning ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Stop Scanning
-              </>
-            ) : (
-              <>
-                <Camera className="mr-2 h-4 w-4" />
-                Start Barcode Scanning
-              </>
-            )}
-          </Button>
-        </div>
-
-        {isScanning && (
-          <div className="mt-4">
+        {isScanning ? (
+          <div>
+            <div className="flex mb-3 justify-between items-center">
+              <Button
+                type="button"
+                onClick={stopBarcodeScanning}
+                className="mr-2"
+                disabled={isLoading}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
             <video ref={videoRef} className="w-full" />
+            <div className="flex mt-3 justify-between items-center">
+              <Button
+                type="button"
+                onClick={stopBarcodeScanning}
+                className="mr-2"
+                disabled={isLoading}
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
+        ) : (
+          <>
+            {file && (
+              <div className="flex flex-col items-center gap-2 justify-end">
+                <div className="w-full flex flex-col lg:flex-row items-center justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCancel}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Extract Text
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {imageUrl && (
+                  <Image
+                    src={imageUrl}
+                    alt="Uploaded"
+                    width={100}
+                    height={100}
+                    className="w-full h-64 object-contain border rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => inputRef.current?.click()}
+                  />
+                )}
+              </div>
+            )}
+
+            {!file && (
+              <div className="w-full h-80 flex flex-col items-center justify-center rounded-lg">
+                <Image
+                  src="/barcode-logo.jpg"
+                  alt="Upload Image"
+                  width={100}
+                  height={100}
+                  className="h-32 w-32 hover:cursor-pointer"
+                  onClick={() => inputRef.current?.click()}
+                />
+                <p className="mb-2 text-xl text-gray-950 dark:text-gray-400">
+                  Drop, Upload or Paste Image
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Supported formats: JPG, PNG, GIF, JFIF (JPEG), HEIC, PDF
+                </p>
+                <p className="my-3 text-slate-400 text-lg">Or</p>
+                <div className="flex items-center flex-col lg:flex-row justify-center gap-3">
+                  <Button
+                    onClick={startBarcodeScanning}
+                    className="w-auto"
+                    disabled={isLoading || isScanning}
+                  >
+                    {isScanning ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Stop Scanning
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="mr-2 h-4 w-4" />
+                        Start Barcode Scanning
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                  >
+                    <Plus className="size-4 mr-2" />
+                    Browse here
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
+        <Input
+          id="file-upload"
+          type="file"
+          ref={inputRef}
+          hidden
+          className="hidden"
+          onChange={handleFileChange}
+          accept="image/*,.pdf"
+        />
 
         {error && (
           <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg dark:bg-red-900 dark:text-red-100">
@@ -229,12 +334,19 @@ export default function BarcodeScanner() {
         )}
 
         {extractedText && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">
-              Extracted Information:
-            </h3>
-            <div className="p-4 bg-gray-100 rounded-lg whitespace-pre-wrap dark:bg-gray-800 dark:text-gray-200">
-              {extractedText}
+          <div>
+            <EditableText
+              text={extractedText}
+              onSave={(newText) => {
+                setExtractedText(newText);
+                setInitialExtractedText(newText);
+              }}
+            />
+            <div className="flex items-center justify-end mt-4">
+              <Button onClick={handleContinue}>
+                Continue
+                <ArrowRight className="size-4 ml-2" />
+              </Button>
             </div>
           </div>
         )}

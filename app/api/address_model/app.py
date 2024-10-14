@@ -5,10 +5,9 @@ from index import AddressAISystem
 import google.generativeai as genai
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key="AIzaSyD79FBA6NznmOmbILbM4aZOu6IWiKL3VIo")
 
 system = AddressAISystem("app/api/address_model/Book2.csv")
 

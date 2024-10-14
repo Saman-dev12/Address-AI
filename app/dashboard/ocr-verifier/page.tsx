@@ -1,6 +1,6 @@
 import React from "react";
 import OCRV from "./components/OCR";
-import ResponsiveContainer from "@/app/responsive-container";
+import ResponsiveContainer from "@/components/responsive-container";
 
 function OCRVerifier() {
   return (

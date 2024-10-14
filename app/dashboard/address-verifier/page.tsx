@@ -9,7 +9,7 @@ import {
   useBulkOutputAddressesStore,
 } from "@/zustand/address";
 import { useRouter } from "next/navigation";
-import ResponsiveContainer from "@/app/responsive-container";
+import ResponsiveContainer from "@/components/responsive-container";
 
 type VARIANT = "UPLOAD" | "IMPORT";
 
