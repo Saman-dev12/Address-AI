@@ -1,168 +1,107 @@
 import re
-from fuzzywuzzy import fuzz
 import pandas as pd
 from collections import defaultdict
+from sklearn.ensemble import RandomForestClassifier
+from fuzzywuzzy import fuzz
 
 INDIAN_ADDRESS_TERMS = {
     "gali",
-    "wali",
-    "chowk",
-    "nagar",
     "marg",
     "road",
     "street",
-    "lane",
-    "bagh",
-    "colony",
+    "nagar",
     "sector",
     "block",
     "phase",
-    "vihar",
     "enclave",
     "market",
     "bazaar",
-    "pura",
     "puri",
-    "garh",
-    "mohalla",
-    "tola",
-    "sarai",
     "pur",
     "ganj",
     "gunj",
     "mandi",
-    "mahal",
-    "haveli",
-    "chawl",
-    "wadi",
-    "pada",
-    "taluka",
-    "district",
-    "gram",
-    "gaon",
-    "basti",
-    "wada",
-    "pada",
-    "pol",
-    "peth",
-    "nagri",
-    "naga",
-    "tand",
-    "tandi",
-    "tola",
-    "khurd",
-    "kalan",
-    "kot",
-    "dera",
-    "dara",
-    "patti",
-    "khera",
-    "colony",
-    "society",
-    "apartment",
-    "flat",
-    "house",
-    "building",
-    "tower",
-    "complex",
-    "residency",
-    "heights",
+    "mohalla",
     "villa",
-    "bungalow",
-    "mansion",
+    "complex",
+    "society",
     "plaza",
-    "arcade",
-    "hub",
-    "center",
-    "point",
 }
+
+SPELLING_CORRECTION_THRESHOLD = 90
 
 
 class AddressAISystem:
     def __init__(self, dataset_path):
         self.dataset = pd.read_csv(dataset_path)
         self.grouped_data = self.preprocess_dataset(self.dataset)
+        self.model = RandomForestClassifier()  # Initialize the machine learning model
 
     def preprocess_dataset(self, dataset):
         grouped_data = defaultdict(list)
         for _, row in dataset.iterrows():
-            address = (
-                f"{row['Place']} {row['Sub-District']} {row['District']} {row['State']}"
-            )
-            address_normalized = address.lower()
-            grouped_data[row["Pincode"]].append(
+            grouped_data[row["Place"].lower()].append(
                 {
-                    "address": address_normalized,
                     "place": row["Place"],
-                    "sub_district": row["Sub-District"],
                     "district": row["District"],
                     "state": row["State"],
+                    "pincode": row["Pincode"],
                 }
             )
         return grouped_data
 
-    def calculate_match_score(self, input_address, dataset_address):
-        exact_match_bonus = sum(
-            30 for word in input_address.split() if word in dataset_address.split()
-        )
-        ratio = fuzz.token_set_ratio(input_address, dataset_address)
-        term_boost = sum(
-            5 for term in INDIAN_ADDRESS_TERMS if term in input_address.split()
-        )
-        return ratio + exact_match_bonus + term_boost
+    def extract_components(self, address):
+        address = re.sub(r"\b\d{6}\b", "", address)  # Remove pincode if present
+        components = re.findall(r"\b[\w\'-]+\b", address.lower())
+        return components
 
-    def construct_corrected_address(self, original_address_parts, best_match):
-        corrected_address = f"{original_address_parts[0]} {best_match['place']}, {best_match['district']}, {best_match['state']}"
-        return corrected_address
-
-    def find_best_match(self, address, threshold=70):
-        address_normalized = address.lower()
-        original_address_parts = address.split()
+    def find_best_match(self, components):
         best_match = None
         best_score = 0
-        spelling_corrections = {}
 
-        for pincode, addresses in self.grouped_data.items():
-            for addr_data in addresses:
-                score = self.calculate_match_score(
-                    address_normalized, addr_data["address"]
-                )
-                if score > best_score:
-                    best_score = score
-                    best_match = addr_data
-                    best_match["pincode"] = pincode
-                    best_match["score"] = score
-
-        status = (
-            "Valid" if best_match and best_match["score"] >= threshold else "Invalid"
-        )
-
-        if best_match:
-            for word in original_address_parts:
-                if word.lower() != best_match["place"].lower() and not any(
-                    fuzz.ratio(word.lower(), correct_word.lower()) > 80
-                    for correct_word in spelling_corrections.values()
-                ):
-                    spelling_corrections[word] = best_match["place"]
-
-            corrected_address = self.construct_corrected_address(
-                original_address_parts, best_match
+        for place, details in self.grouped_data.items():
+            score = max(
+                fuzz.partial_ratio(place, " ".join(components))
+                for i in range(len(components))
             )
+            if score > best_score:
+                best_score = score
+                best_match = details[0]
 
-        return {
-            "corrected_address": corrected_address if best_match else None,
-            "original_address": address,
-            "predicted_pincode": int(best_match["pincode"]) if best_match else None,
-            "spelling_corrections": spelling_corrections,
-            "status": status,
-        }
+        return best_match
+
+    def construct_corrected_address(self, original_address, best_match):
+        match = re.match(
+            r"([\w\s-]+?)(\s*,?\s*\w+\s+\w+)$", original_address, re.IGNORECASE
+        )
+        if match:
+            prefix = match.group(1).strip()
+        else:
+            prefix = original_address.split(",")[0].strip()
+
+        corrected_address = f"{prefix}, {best_match['place']}, {best_match['district']}, {best_match['pincode']}"
+        return corrected_address
 
     def process_address(self, address):
-        return self.find_best_match(address)
+        components = self.extract_components(address)
+        best_match = self.find_best_match(components)
+
+        if best_match:
+            corrected_address = self.construct_corrected_address(address, best_match)
+            return {
+                "original_address": address,
+                "corrected_address": corrected_address,
+                "place": best_match["place"],
+                "district": best_match["district"],
+                "state": best_match["state"],
+                "pincode": best_match["pincode"],
+            }
+        else:
+            return {
+                "original_address": address,
+                "corrected_address": None,
+                "error": "No match found",
+            }
 
     def process_addresses_bulk(self, addresses):
-        results = []
-        for address in addresses:
-            result = self.find_best_match(address)
-            results.append(result)
-        return results
+        return [self.process_address(address) for address in addresses]
