@@ -15,6 +15,10 @@ export const companyTable = pgTable("company", {
   password: text("password").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  max_verified_address: integer("max_verified_address").default(0).notNull(),
+  remaining_verified_address: integer("remaining_verified_address")
+    .default(0)
+    .notNull(),
 });
 
 export const companyTableRelations = relations(companyTable, ({ many }) => ({

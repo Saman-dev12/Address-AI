@@ -26,6 +26,8 @@ const OutputAddressesClient = () => {
   const { outputAddresses } = useBulkOutputAddressesStore();
   const { setInputAddress } = useInputAddressStore();
   const { setOutputAddress } = useOutputAddressStore();
+
+  console.log(outputAddresses);
   return (
     <Card className="bg-white border-purple-500">
       <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
@@ -67,18 +69,16 @@ const OutputAddressesClient = () => {
                     : true;
 
                 const regex = /\b\d{6}\b/;
-                const match = address.match(regex);
-                const pincode = match ? match[0] : null;
+                const match =
+                  outputAddresses[index].corrected_address.match(regex);
+                const predictedpincode = match ? match[0] : null;
 
-                changed =
-                  pincode == outputAddresses[index].predicted_pincode
-                    ? false
-                    : true;
+                const match2 = address.match(regex);
+                const originalPincode = match2 ? match2[0] : null;
 
-                const danger =
-                  outputAddresses[index].predicted_pincode == null
-                    ? true
-                    : false;
+                changed = predictedpincode !== originalPincode ? true : false;
+
+                const danger = predictedpincode == null ? true : false;
 
                 return (
                   <TableRow
@@ -94,7 +94,7 @@ const OutputAddressesClient = () => {
                       {outputAddresses[index].corrected_address}
                     </TableCell>
                     <TableCell>
-                      {outputAddresses[index].predicted_pincode}
+                      {predictedpincode}
                       {danger && (
                         <span className="text-rose-500">
                           {" "}
