@@ -15,20 +15,6 @@
       "when": 1731158008965,
       "tag": "0001_big_moonstone",
       "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1731162479404,
-      "tag": "0002_awesome_prowler",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1731162531277,
-      "tag": "0003_dear_runaways",
-      "breakpoints": true
     }
   ]
 }

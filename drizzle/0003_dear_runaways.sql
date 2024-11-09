@@ -1,1 +1,0 @@
-ALTER TABLE "company" ALTER COLUMN "max_verified_address" SET DEFAULT 3000;
