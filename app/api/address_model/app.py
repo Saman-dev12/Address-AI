@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 genai.configure(api_key="AIzaSyD79FBA6NznmOmbILbM4aZOu6IWiKL3VIo")
 
-system = AddressAISystem("app/api/address_model/Book2.csv")
+system = AddressAISystem("./Book2.csv")
 
 
 @app.route("/process_address", methods=["POST"])
