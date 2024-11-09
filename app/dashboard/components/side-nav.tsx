@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import {
   Home,
@@ -9,21 +9,46 @@ import {
   User,
   Menu,
   Barcode,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useEffectOnce } from "react-use";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const SideNav = () => {
   const { data } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const logoutButtonRef = useRef<HTMLButtonElement>(null);
 
   const iconClassName = `
     h-5 w-5 mr-2 text-purple-500 group-hover:text-slate-100
   `;
+
+  useEffectOnce(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        logoutButtonRef.current &&
+        !logoutButtonRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  });
 
   const routes = [
     {
@@ -108,8 +133,31 @@ const SideNav = () => {
           </Link>
         ))}
       </div>
-      <div className="w-full mt-auto">
-        <Button className="bg-purple-600 hover:bg-purple-600 hover:opacity-80 py-6 text-base w-full flex items-center justify-center">
+      <div className="w-full mt-auto relative">
+        <Button
+          variant="outline"
+          ref={logoutButtonRef}
+          className={cn(
+            "absolute bottom-16 opacity-0 inset-x-0 translate-y-8 transition bg-transparent border",
+            dropdownOpen && "opacity-100 translate-y-0 transition-all"
+          )}
+        >
+          <span
+            onClick={() => {
+              signOut();
+              toast.success("Logged out successfully");
+              router.refresh();
+            }}
+            className="w-full flex items-center justify-center"
+          >
+            <LogOut className="h-5 w-5 mr-2" />
+            Logout
+          </span>
+        </Button>
+        <Button
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="bg-purple-600 hover:bg-purple-600 hover:opacity-80 py-6 text-base w-full flex items-center justify-center"
+        >
           <User className="h-5 w-5 mr-2" /> {data?.user?.name}
         </Button>
       </div>

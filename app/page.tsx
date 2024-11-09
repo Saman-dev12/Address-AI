@@ -97,7 +97,7 @@ export default function LandingPage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className="max-w-lg mx-auto p-7 rounded-lg shadow-lg bg-white/5 backdrop-blur"
+                  className="max-w-lg mx-auto p-7 rounded-lg shadow-lg bg-white/5 backdrop-blur border-purple-700 border"
                 >
                   <div className="relative">
                     <Input
@@ -106,7 +106,7 @@ export default function LandingPage() {
                       placeholder={placeholderAddress}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      className="mb-4 bg-transparent border-white/20 focus:bg-transparent hover:bg-transparent placeholder-purple-400 transition-colors duration-300 pr-10 py-5 ring-offset-white"
+                      className="mb-4 bg-transparent focus:bg-transparent hover:bg-transparent placeholder-purple-600 transition-colors duration-300 pr-10 py-5"
                     />
                     <motion.div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-400">
                       <ArrowRight size={20} />
@@ -281,7 +281,7 @@ export default function LandingPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button className="bg-purple-500 text-black hover:bg-purple-400 text-lg px-8 py-5 transition-colors duration-300">
+                  <Button className="bg-gradient-to-r from-purple-400 to-purple-700 text-black hover:opacity-80 text-lg px-8 py-5 transition-colors duration-300">
                     Sign Up for Free Trial
                   </Button>
                 </motion.div>

@@ -35,7 +35,16 @@ export default function RootLayout({
         <NextAuthProvider>
           <QueryProvider>
             {children}
-            <Toaster />
+            <Toaster
+              toastOptions={{
+                style: {
+                  borderRadius: "10px",
+                  background: "#333",
+                  color: "#fff",
+                  border: "2px solid #830bf4",
+                },
+              }}
+            />
             <SonnerToaster />
           </QueryProvider>
         </NextAuthProvider>

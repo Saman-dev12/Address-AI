@@ -19,5 +19,14 @@ export const middleware = (req: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/", "/sign-in", "/sign-up", "/dashboard"],
+  matcher: [
+    "/",
+    "/sign-in",
+    "/sign-up",
+    "/dashboard",
+    "/dashboard/address-verifier",
+    "/dashboard/ocr-verifier",
+    "/dashboard/barcode-verifier",
+    "/dashboard/settings",
+  ],
 };

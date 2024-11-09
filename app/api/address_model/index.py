@@ -35,7 +35,7 @@ class AddressAISystem:
     def __init__(self, dataset_path):
         self.dataset = pd.read_csv(dataset_path)
         self.grouped_data = self.preprocess_dataset(self.dataset)
-        self.model = RandomForestClassifier()  # Initialize the machine learning model
+        self.model = RandomForestClassifier()
 
     def preprocess_dataset(self, dataset):
         grouped_data = defaultdict(list)
@@ -51,7 +51,7 @@ class AddressAISystem:
         return grouped_data
 
     def extract_components(self, address):
-        address = re.sub(r"\b\d{6}\b", "", address)  # Remove pincode if present
+        address = re.sub(r"\b\d{6}\b", "", address)
         components = re.findall(r"\b[\w\'-]+\b", address.lower())
         return components
 

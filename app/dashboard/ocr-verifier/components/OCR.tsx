@@ -99,8 +99,29 @@ export default function OCRV() {
     );
   };
 
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFile(e.dataTransfer.files[0]);
+      setExtractedText(null);
+      setError(null);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageDataUri = reader.result;
+        setImageData(imageDataUri as string);
+      };
+      reader.readAsDataURL(e.dataTransfer.files[0]);
+    }
+  };
+
   return (
-    <Card className="w-full mx-auto border border-purple-500 shadow-lg">
+    <Card
+      onDrop={handleDrop}
+      onDragOver={(e) => e.preventDefault()}
+      className="w-full mx-auto border border-purple-500 shadow-lg"
+    >
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
           {imageData && (
