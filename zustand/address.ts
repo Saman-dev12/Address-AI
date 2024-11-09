@@ -3,8 +3,10 @@ import { create } from "zustand";
 export type OutputAddress = {
   corrected_address: string;
   original_address: string;
-  predicted_pincode: number | null;
-  spelling_corrections: Record<string, string>;
+  district: string | null;
+  pincode: number | null;
+  place: string | null;
+  state: string | null;
   status: string;
 };
 
