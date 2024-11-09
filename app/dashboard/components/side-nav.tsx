@@ -30,7 +30,7 @@ const SideNav = () => {
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
 
   const iconClassName = `
-    h-5 w-5 mr-2 text-purple-500 group-hover:text-slate-100
+    
   `;
 
   useEffectOnce(() => {
@@ -54,27 +54,27 @@ const SideNav = () => {
     {
       label: "Overview",
       href: `/dashboard`,
-      icon: <Home className={iconClassName} />,
+      icon: Home,
     },
     {
       label: "Address Verification",
       href: `/dashboard/address-verifier`,
-      icon: <CheckCircle className={iconClassName} />,
+      icon: CheckCircle,
     },
     {
       label: "OCR Verification",
       href: `/dashboard/ocr-verifier`,
-      icon: <Eye className={iconClassName} />,
+      icon: Eye,
     },
     {
       label: "Barcode Verifier",
       href: `/dashboard/barcode-verifier`,
-      icon: <Barcode className={iconClassName} />,
+      icon: Barcode,
     },
     {
       label: "Settings",
       href: `/dashboard/settings`,
-      icon: <Settings className={iconClassName} />,
+      icon: Settings,
     },
   ];
 
@@ -128,7 +128,12 @@ const SideNav = () => {
             )}
             onClick={() => setIsOpen(false)}
           >
-            {route.icon}
+            <route.icon
+              className={cn(
+                `h-5 w-5 mr-2 text-purple-500 group-hover:text-slate-100`,
+                pathname === route.href && "text-white"
+              )}
+            />
             {route.label}
           </Link>
         ))}

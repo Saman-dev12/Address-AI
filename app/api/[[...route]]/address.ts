@@ -48,12 +48,6 @@ const app = new Hono()
           { addresses }
         );
         corrected_addresses = res.data.data;
-
-        corrected_addresses.map(
-          (item) =>
-            (item.corrected_address =
-              item.corrected_address + " " + item.predicted_pincode)
-        );
       } catch (err) {
         console.log("BULK_ADDRESS[POST]:", err);
         return c.json({ error: "Internal Server Error" }, 500);
