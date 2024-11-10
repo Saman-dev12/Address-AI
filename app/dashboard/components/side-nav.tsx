@@ -10,6 +10,7 @@ import {
   Menu,
   Barcode,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
@@ -68,9 +69,9 @@ const SideNav = () => {
       icon: Barcode,
     },
     {
-      label: "Settings",
-      href: `/dashboard/settings`,
-      icon: Settings,
+      label: "Subscription",
+      href: `/dashboard/subscription`,
+      icon: CreditCard,
     },
   ];
 
