@@ -29,10 +29,6 @@ const SideNav = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
 
-  const iconClassName = `
-    
-  `;
-
   useEffectOnce(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (
@@ -143,7 +139,7 @@ const SideNav = () => {
           variant="outline"
           ref={logoutButtonRef}
           className={cn(
-            "absolute bottom-16 opacity-0 inset-x-0 translate-y-8 transition bg-transparent border",
+            "absolute bottom-16 opacity-0 bg-gradient-to-br from-purple-500 to-purple-600 inset-x-0 translate-y-8 transition bg-transparent border",
             dropdownOpen && "opacity-100 translate-y-0 transition-all"
           )}
         >
@@ -161,7 +157,7 @@ const SideNav = () => {
         </Button>
         <Button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="bg-purple-600 hover:bg-purple-600 hover:opacity-80 py-6 text-base w-full flex items-center justify-center"
+          className="bg-gradient-to-br from-purple-600 to-purple-800 hover:bg-purple-600 hover:opacity-80 py-6 text-base w-full flex items-center justify-center"
         >
           <User className="h-5 w-5 mr-2" /> {data?.user?.name}
         </Button>
@@ -191,7 +187,7 @@ const SideNav = () => {
         </Sheet>
       </div>
       <div className="md:hidden h-16"></div>
-      <div className="hidden md:flex h-screen fixed inset-y-0 left-0 bg-black w-72 flex-col items-start text-white rounded-e-lg px-5 py-6 justify-between overflow-auto">
+      <div className="hidden md:flex h-screen fixed inset-y-0 left-0 bg-[#1E1E2D] w-72 flex-col items-start text-white rounded-e-lg px-5 py-6 justify-between overflow-auto">
         <NavContent />
       </div>
     </>

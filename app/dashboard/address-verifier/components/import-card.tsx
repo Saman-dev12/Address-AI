@@ -7,6 +7,7 @@ interface ImportCardProps {
   data: string[][];
   onCancel: () => void;
   onSubmit: (data: string[]) => void;
+  isLoading?: boolean;
 }
 
 const requiredOptions = ["address"];
@@ -19,6 +20,7 @@ const ImportCard: React.FC<ImportCardProps> = ({
   data,
   onCancel,
   onSubmit,
+  isLoading,
 }) => {
   const [selectedColumn, setSelectedColumn] = useState<Selected_Column_State>(
     {}
@@ -77,18 +79,18 @@ const ImportCard: React.FC<ImportCardProps> = ({
 
   return (
     <div>
-      <Card className="border-none drop-shadow-sm mb-40">
+      <Card className="border-none drop-shadow-sm mb-40 mt-6">
         <CardHeader className="lg:flex-row lg:items-center gap-y-2 lg:justify-between">
           <CardTitle className="text-xl line-clamp-1">
             Import Addresses
           </CardTitle>
           <div className="flex flex-col lg:flex-row lg:items-center gap-2">
-            <Button variant="outline" onClick={onCancel}>
+            <Button variant="outline" disabled={isLoading} onClick={onCancel}>
               Cancel
             </Button>
             <Button
               onClick={handleContinue}
-              disabled={progress != requiredOptions.length}
+              disabled={progress != requiredOptions.length || isLoading}
             >
               Continue
             </Button>

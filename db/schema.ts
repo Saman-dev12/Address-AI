@@ -7,6 +7,7 @@ import {
   varchar,
   integer,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 export const companyTable = pgTable("company", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -22,11 +23,13 @@ export const companyTable = pgTable("company", {
   used_verified_address: integer("used_verified_address").default(0).notNull(),
 });
 
+export const companySchema = createInsertSchema(companyTable);
+
 export const companyTableRelations = relations(companyTable, ({ many }) => ({
-  totalVerifiedAddress: many(totalVerifiedAddress),
+  totalVerifiedAddress: many(totalVerifiedAddressTable),
 }));
 
-export const totalVerifiedAddress = pgTable("totalVerifiedAddresses", {
+export const totalVerifiedAddressTable = pgTable("totalVerifiedAddresses", {
   id: uuid("id").defaultRandom().primaryKey(),
   total: integer("total").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -36,11 +39,15 @@ export const totalVerifiedAddress = pgTable("totalVerifiedAddresses", {
   }),
 });
 
+export const totalVerifiedAddressSchema = createInsertSchema(
+  totalVerifiedAddressTable
+);
+
 export const totalVerifiedAddressesRelations = relations(
-  totalVerifiedAddress,
+  totalVerifiedAddressTable,
   ({ one }) => ({
     company: one(companyTable, {
-      fields: [totalVerifiedAddress.companyId],
+      fields: [totalVerifiedAddressTable.companyId],
       references: [companyTable.id],
     }),
   })

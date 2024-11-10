@@ -42,7 +42,7 @@ const OutputAddressesClient = () => {
               router.refresh();
             }}
           >
-            Cancel
+            Restart
           </Button>
           <Button className="w-full lg:w-auto">
             <Download className="size-4 mr-2" />

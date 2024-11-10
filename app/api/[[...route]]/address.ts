@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import axios from "axios";
 import { db } from "@/db/drizzle";
-import { companyTable, totalVerifiedAddress } from "@/db/schema";
+import { companyTable, totalVerifiedAddressTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { OutputAddress } from "@/zustand/address";
 
@@ -49,20 +49,22 @@ const app = new Hono()
         );
         corrected_addresses = res.data.data;
 
-          await db
-            .update(companyTable)
-            .set({
-              used_verified_address: user.used_verified_address + corrected_addresses.length,
-              remaining_verified_address:
-                user.max_verified_address - user.used_verified_address-corrected_addresses.length,
-            })
-            .where(eq(companyTable.id, user.id));
+        await db
+          .update(companyTable)
+          .set({
+            used_verified_address:
+              user.used_verified_address + corrected_addresses.length,
+            remaining_verified_address:
+              user.max_verified_address -
+              user.used_verified_address -
+              corrected_addresses.length,
+          })
+          .where(eq(companyTable.id, user.id));
 
-          await db.insert(totalVerifiedAddress).values({
-            total: corrected_addresses.length,
-            companyId: user.id,
-          });
-
+        await db.insert(totalVerifiedAddressTable).values({
+          total: corrected_addresses.length,
+          companyId: user.id,
+        });
       } catch (err) {
         console.log("BULK_ADDRESS[POST]:", err);
         return c.json({ error: "Internal Server Error" }, 500);
@@ -124,7 +126,7 @@ const app = new Hono()
           remaining_verified_address:
             user.max_verified_address - user.used_verified_address - 1,
         });
-        await db.insert(totalVerifiedAddress).values({
+        await db.insert(totalVerifiedAddressTable).values({
           total: 1,
           companyId: user.id,
         });
@@ -147,6 +149,5 @@ const app = new Hono()
       );
     }
   );
-
 
 export default app;

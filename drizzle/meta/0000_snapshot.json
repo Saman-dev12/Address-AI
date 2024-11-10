@@ -1,5 +1,5 @@
 {
-  "id": "acf93958-5350-4c2b-adb1-6a02267434a5",
+  "id": "e18e2938-fc93-4955-b636-8c0359650b62",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -46,6 +46,27 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "max_verified_address": {
+          "name": "max_verified_address",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 3000
+        },
+        "remaining_verified_address": {
+          "name": "remaining_verified_address",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "used_verified_address": {
+          "name": "used_verified_address",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
@@ -60,6 +81,64 @@
           ]
         }
       }
+    },
+    "public.totalVerifiedAddresses": {
+      "name": "totalVerifiedAddresses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "total": {
+          "name": "total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "company_id": {
+          "name": "company_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "totalVerifiedAddresses_company_id_company_id_fk": {
+          "name": "totalVerifiedAddresses_company_id_company_id_fk",
+          "tableFrom": "totalVerifiedAddresses",
+          "tableTo": "company",
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
   "enums": {},
