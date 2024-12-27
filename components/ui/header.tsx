@@ -13,31 +13,34 @@ const Header = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger>
         <Button
-          size={"sm"}
-          variant={"outline"}
+          size="sm"
+          variant="outline"
           className="w-full lg:w-auto justify-between bg-white/10 text-white font-normal hover:bg-white/20 hover:text-white border-none focus-visible:ring-offset-0 focus-visible:ring-transparent outline-none focus:bg-white/30 transition"
         >
           <Menu className="size-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent side={"left"} className="px-2 bg-black text-white">
+      <SheetContent side="left" className="px-3 bg-black text-white">
         <nav className="pt-7 flex flex-col">
           {["Home", "Features", "Pricing", "Documentation"].map(
             (route, index) => (
-              <Button
+              <Link
+                href="#"
                 key={index}
-                className="justify-start py-8 text-base bg-black border-b border-gray-700/40"
+                className="py-3 px-2 text-center underline"
               >
                 {route}
-              </Button>
+              </Link>
             )
           )}
         </nav>
         <Button
           variant="outline"
-          className="bg-gradient-to-br mt-8 w-full from-purple-500 to-purple-700 text-gray-200 hover:opacity-80 hover:text-gray-200 transition-colors duration-300 border-none rounded-xl py-5"
+          className="bg-gradient-to-br mt-8 w-full from-purple-500 to-purple-700 text-gray-200 hover:opacity-80 hover:text-gray-200 transition-colors duration-300 border-none rounded-lg py-5"
         >
-          <Link href="/sign-in">Login</Link>
+          <Link href="/sign-in" className="w-full">
+            Login
+          </Link>
         </Button>
       </SheetContent>
     </Sheet>
