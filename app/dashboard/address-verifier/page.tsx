@@ -42,8 +42,8 @@ const AddressVerifierPage = () => {
   const { setOutputAddress } = useOutputAddressStore();
   const { setInputAddress } = useInputAddressStore();
 
-  const bulkAddressQuery = useBulkAddress(data?.user?.email!);
-  const singleAddressQuery = useSingleAddress(data?.user?.email!);
+  const bulkAddressQuery = useBulkAddress(data?.user?.email || "");
+  const singleAddressQuery = useSingleAddress(data?.user?.email || "");
 
   const [variant, setVariant] = useState<VARIANT>("UPLOAD");
   const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);

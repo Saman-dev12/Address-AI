@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
-// import { useDropzone } from "react-dropzone";
 import { useCSVReader } from "react-papaparse";
 
 const INITIAL_IMPORT_RESULTS = {
