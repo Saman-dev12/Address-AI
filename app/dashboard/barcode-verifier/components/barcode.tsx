@@ -206,7 +206,7 @@ export default function BarcodeScanner() {
                 type="button"
                 onClick={stopBarcodeScanning}
                 className="mr-2"
-                disabled={isLoading}
+                disabled={isLoading || singleAddressQuery.isPending}
                 variant="outline"
               >
                 Cancel
@@ -218,7 +218,7 @@ export default function BarcodeScanner() {
                 type="button"
                 onClick={stopBarcodeScanning}
                 className="mr-2"
-                disabled={isLoading}
+                disabled={isLoading || singleAddressQuery.isPending}
                 variant="outline"
               >
                 Cancel
@@ -234,14 +234,14 @@ export default function BarcodeScanner() {
                     type="button"
                     variant="outline"
                     onClick={handleCancel}
-                    disabled={isLoading}
+                    disabled={isLoading || singleAddressQuery.isPending}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     onClick={handleSubmit}
-                    disabled={isLoading}
+                    disabled={isLoading || singleAddressQuery.isPending}
                   >
                     {isLoading ? (
                       <>
@@ -290,7 +290,9 @@ export default function BarcodeScanner() {
                   <Button
                     onClick={startBarcodeScanning}
                     className="w-auto"
-                    disabled={isLoading || isScanning}
+                    disabled={
+                      isLoading || isScanning || singleAddressQuery.isPending
+                    }
                   >
                     {isScanning ? (
                       <>
@@ -307,6 +309,7 @@ export default function BarcodeScanner() {
                   <Button
                     type="button"
                     onClick={() => inputRef.current?.click()}
+                    disabled={singleAddressQuery.isPending}
                   >
                     <Plus className="size-4 mr-2" />
                     Browse here
@@ -343,7 +346,10 @@ export default function BarcodeScanner() {
               }}
             />
             <div className="flex items-center justify-end mt-4">
-              <Button onClick={handleContinue}>
+              <Button
+                onClick={handleContinue}
+                disabled={singleAddressQuery.isPending}
+              >
                 Continue
                 <ArrowRight className="size-4 ml-2" />
               </Button>

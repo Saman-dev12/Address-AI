@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db } from "@/db/drizzle";
 import { companyTable, totalVerifiedAddressTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { count, eq, sql, sum } from "drizzle-orm";
 
 const app = new Hono().get(
   "/",
@@ -26,10 +26,14 @@ const app = new Hono().get(
     }
 
     const totalVerifiedAddresses = await db
-      .select()
+      .select({
+        total: count(totalVerifiedAddressTable.total),
+        createdAt: sql`DATE(${totalVerifiedAddressTable.createdAt})`.as("date"),
+      })
       .from(totalVerifiedAddressTable)
       .where(eq(totalVerifiedAddressTable.companyId, company.id))
-      .orderBy(totalVerifiedAddressTable.createdAt);
+      .groupBy(sql`DATE(${totalVerifiedAddressTable.createdAt})`)
+      .orderBy(sql`DATE(${totalVerifiedAddressTable.createdAt})`);
 
     return c.json(
       {

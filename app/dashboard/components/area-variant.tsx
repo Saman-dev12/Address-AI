@@ -12,11 +12,8 @@ import React from "react";
 
 interface AreaVariantProps {
   data?: {
-    id: string;
     total: number | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-    companyId: string | null;
+    createdAt: never;
   }[];
 }
 
