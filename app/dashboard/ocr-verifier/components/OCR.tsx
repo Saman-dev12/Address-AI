@@ -72,6 +72,7 @@ export default function OCRV() {
 
       setExtractedText(data.output);
     } catch (err) {
+      console.log(err);
       setError("Failed to process the image. Please try again.");
     } finally {
       setIsLoading(false);
@@ -101,7 +102,6 @@ export default function OCRV() {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);
       setExtractedText(null);

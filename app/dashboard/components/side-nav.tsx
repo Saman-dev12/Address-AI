@@ -5,7 +5,6 @@ import {
   Home,
   CheckCircle,
   Eye,
-  Settings,
   User,
   Menu,
   Barcode,

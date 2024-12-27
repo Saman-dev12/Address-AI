@@ -1,6 +1,9 @@
 import { format } from "date-fns";
 
-export const CustomTooltip = ({ active, payload }: any) => {
+export const CustomTooltip = (
+  //@ts-ignore
+  { active, payload }
+) => {
   if (!active) return null;
 
   const date = payload[0].payload.createdAt;

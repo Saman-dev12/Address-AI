@@ -7,7 +7,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: AuthOptions = {
-  adapter: DrizzleAdapter(db) as any,
+  adapter: DrizzleAdapter(db),
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -53,7 +53,7 @@ export const authOptions: AuthOptions = {
       try {
         console.log("User", user);
         console.log("Account", account);
-        const [existingCompany] = await db
+        await db
           .select()
           .from(companyTable)
           .where(eq(companyTable.email, user.email!))

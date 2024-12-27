@@ -3,7 +3,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db } from "@/db/drizzle";
 import { companyTable, totalVerifiedAddressTable } from "@/db/schema";
-import { count, eq, sql, sum } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 
 const app = new Hono().get(
   "/",

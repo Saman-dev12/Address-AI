@@ -12,6 +12,8 @@ const routes = app
   .route("/:email/address", AddressRouter)
   .route("/:email/total-addresses", TotalAddressRouter);
 
+console.log(routes);
+
 app.onError((err, ctx) => {
   if (err instanceof HTTPException) {
     return err.getResponse();

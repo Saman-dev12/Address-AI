@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInputAddressStore, useOutputAddressStore } from "@/zustand/address";
 
@@ -23,8 +23,6 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
 });
 
 import "leaflet/dist/leaflet.css";
-import Link from "next/link";
-import { ExternalLinkIcon } from "lucide-react";
 import ResponsiveContainer from "@/components/responsive-container";
 
 const MapPage = () => {

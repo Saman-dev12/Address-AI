@@ -5,14 +5,7 @@ import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  FileText,
-  Loader2,
-  Upload,
-  Camera,
-  Plus,
-  ArrowRight,
-} from "lucide-react";
+import { FileText, Loader2, Camera, Plus, ArrowRight } from "lucide-react";
 import {
   BrowserMultiFormatReader as BrowserMultiFormatReader2,
   NotFoundException,

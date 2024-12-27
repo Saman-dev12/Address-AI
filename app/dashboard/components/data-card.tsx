@@ -1,13 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { IconType } from "react-icons";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { cn, formatPercentage } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { CountUp } from "./count-up";
 import { Skeleton } from "@/components/ui/skeleton";
 

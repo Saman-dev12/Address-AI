@@ -6,9 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { companySchema } from "@/db/schema";
 import { useTotalAddresses } from "@/features/apis/use-total-addresses";
 import { FileSearch, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
-import { totalVerifiedAddressSchema } from "@/db/schema";
 import { AreaVariant } from "./area-variant";
 
 interface DataChartProps {

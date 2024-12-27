@@ -28,12 +28,20 @@ const CSVDropper: React.FC<CSVDropperProps> = ({ onUpload, isLoading }) => {
         width={100}
         height={100}
         className="h-32 w-32 hover:cursor-pointer"
-        onClick={(e) => inputRef.current?.click()}
+        onClick={() => inputRef.current?.click()}
       />
       <h3 className="text-xl">Drag and drop CSV file here</h3>
       <p className="my-3 text-slate-400 text-lg">Or</p>
-      <CSVReader onUploadAccepted={(results: any) => onUpload(results)}>
-        {({ getRootProps }: any) => (
+      <CSVReader
+        onUploadAccepted={
+          //@ts-ignore
+          (results) => onUpload(results)
+        }
+      >
+        {(
+          //@ts-ignore
+          { getRootProps }
+        ) => (
           <Button disabled={isLoading} ref={inputRef} {...getRootProps()}>
             <Plus className="size-4 mr-2" />
             Browse here

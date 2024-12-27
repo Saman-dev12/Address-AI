@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ export default function LandingPage() {
   const [address, setAddress] = useState("");
   const [verifiedAddress, setVerifiedAddress] = useState("");
   const [placeholderAddress, setPlaceholderAddress] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false); 
+  const [isVerifying, setIsVerifying] = useState(false);
   const addressInputRef = useRef(null);
 
   const handleVerify = () => {
