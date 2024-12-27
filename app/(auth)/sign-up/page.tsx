@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Header from "@/components/ui/header";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -193,8 +193,8 @@ export default function SignUpPage() {
                 className="bg-white/5 text-purple-300 border-purple-500/30 hover:bg-purple-500/20 hover:text-purple-300 hover:opacity-80 transition-all duration-300 py-5 px-8 rounded-md shadow-lg"
               >
                 <Link href="/" className="w-full flex">
-                  <span className="mr-2">Back to Home</span>
-                  <ArrowRight size={20} />
+                  <ArrowLeft size={20} />
+                  <span className="ml-2">Back to Home</span>
                 </Link>
               </Button>
             </motion.div>
