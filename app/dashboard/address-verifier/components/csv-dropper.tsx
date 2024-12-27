@@ -34,12 +34,12 @@ const CSVDropper: React.FC<CSVDropperProps> = ({ onUpload, isLoading }) => {
       <p className="my-3 text-slate-400 text-lg">Or</p>
       <CSVReader
         onUploadAccepted={
-          //@ts-ignore
+          //@ts-expect-error
           (results) => onUpload(results)
         }
       >
         {(
-          //@ts-ignore
+          //@ts-expect-error
           { getRootProps }
         ) => (
           <Button disabled={isLoading} ref={inputRef} {...getRootProps()}>
