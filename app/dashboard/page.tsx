@@ -4,9 +4,14 @@ import { redirect } from "next/navigation";
 import { FaPiggyBank } from "react-icons/fa";
 import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
 import DataChart from "./components/data-charts";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import ResponsiveContainer from "@/components/responsive-container";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Address-AI | Overview",
+  description:
+    "Get an overview of your Address-AI activity, including the total number of addresses verified and interactive charts for insights.",
+};
 
 const DashboardPage = async () => {
   const user = await getCurrentUser();
@@ -14,7 +19,10 @@ const DashboardPage = async () => {
     return redirect("/");
   }
   return (
-    <ResponsiveContainer heading="Overview">
+    <ResponsiveContainer
+      heading="Overview"
+      description="Analytics for your verified addresses"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         <DataCard
           title="Remaining"

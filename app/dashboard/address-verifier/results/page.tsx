@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import OutputAddressesClient from "./components/output-address-client";
+
+export const metadata: Metadata = {
+  title: "Address-AI | Verified-Results",
+  description:
+    "View the detailed results of bulk address corrections uploaded via CSV. Ensure accuracy and resolve errors efficiently.",
+};
 
 const OutputAddresses = () => {
   return (

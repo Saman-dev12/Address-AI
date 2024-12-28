@@ -106,41 +106,43 @@ const SideNav = () => {
   );
 
   const NavContent = () => (
-    <>
-      <div className="flex items-center mb-8">
-        <Logo />
-        <Link href="/" className="text-2xl font-bold text-purple-400">
-          AddressAI
-        </Link>
-      </div>
-      <div className="flex flex-col space-y-4 w-full mb-8">
-        {routes.map((route) => (
-          <Link
-            key={route.label}
-            href={route.href}
-            className={cn(
-              "font-medium text-white/90 w-full p-3 hover:bg-purple-500 hover:text-white duration-150 rounded-xl flex items-center group",
-              pathname === route.href && "bg-purple-500 text-white"
-            )}
-            onClick={() => setIsOpen(false)}
-          >
-            <route.icon
-              className={cn(
-                `h-5 w-5 mr-2 text-purple-500 group-hover:text-slate-100`,
-                pathname === route.href && "text-white"
-              )}
-            />
-            {route.label}
+    <div className="h-full w-full flex flex-col justify-between">
+      <div>
+        <div className="flex items-center mb-8">
+          <Logo />
+          <Link href="/" className="text-2xl font-bold text-purple-400">
+            AddressAI
           </Link>
-        ))}
+        </div>
+        <div className="flex flex-col space-y-4 w-full mb-8">
+          {routes.map((route) => (
+            <Link
+              key={route.label}
+              href={route.href}
+              className={cn(
+                "font-medium text-white/90 w-full p-3 hover:bg-purple-500 hover:text-white duration-150 rounded-xl flex items-center group",
+                pathname === route.href && "bg-purple-500 text-white"
+              )}
+              onClick={() => setIsOpen(false)}
+            >
+              <route.icon
+                className={cn(
+                  `h-5 w-5 mr-2 text-purple-500 group-hover:text-slate-100`,
+                  pathname === route.href && "text-white"
+                )}
+              />
+              {route.label}
+            </Link>
+          ))}
+        </div>
       </div>
       <div className="w-full mt-auto relative">
         <Button
           variant="outline"
           ref={logoutButtonRef}
           className={cn(
-            "absolute bottom-16 opacity-0 bg-gradient-to-br from-purple-500 to-purple-600 inset-x-0 translate-y-8 transition bg-transparent border",
-            dropdownOpen && "opacity-100 translate-y-0 transition-all"
+            "absolute bottom-16 hidden text-white bg-gradient-to-br from-purple-600 to-purple-700 inset-x-0 translate-y-8 transition bg-transparent hover:opacity-80 hover:text-white",
+            dropdownOpen && "block translate-y-0 transition-all"
           )}
         >
           <span
@@ -162,16 +164,17 @@ const SideNav = () => {
           <User className="h-5 w-5 mr-2" /> {data?.user?.name}
         </Button>
       </div>
-    </>
+    </div>
   );
 
   return (
     <>
       <div className="md:hidden fixed top-0 left-0 right-0 bg-gray-100 border-b border-gray-200 px-4 py-2 flex justify-between items-center z-50 shadow-sm">
-        <div className="flex items-center">
+        <Link href="/" className="flex items-center">
           <Logo />
           <span className="text-xl font-bold text-purple-600">AddressAI</span>
-        </div>
+        </Link>
+
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm">
@@ -180,7 +183,7 @@ const SideNav = () => {
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-72 bg-black p-6 overflow-y-auto"
+            className="w-72 bg-[#1E1E2D] p-6 h-full overflow-y-auto"
           >
             <NavContent />
           </SheetContent>
